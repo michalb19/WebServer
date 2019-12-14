@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect, send_file
 
 import FileServer
+import config
 
 app = Flask(__name__)
 file_server = FileServer.FileServer()
@@ -31,7 +32,8 @@ def download_file():
     if 'code' in request.args:
         download_file = file_server.get_download_filepath(request.args['code'])
         if download_file  is not None:
-            return send_file(download_file[0], as_attachment=True, attachment_filename=download_file[1])
+            return send_file(download_file[config.SERVER_PATH_INDEX], as_attachment=True, 
+                attachment_filename=download_file[config.ORIGINAL_FILENAME_INDEX])
         return 'Failed finding requested file to download'
     return render_template('download_form.html')
 
