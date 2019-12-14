@@ -13,7 +13,8 @@ def index():
 def upload_status(code):
     if code == '':
         return 'Failed uploading file'
-    return 'File no. %s was uploaded' % (code)
+    file_status = file_server.get_file_status(code)
+    return 'File no. %s was uploaded successfully and downloaded %d times (refresh for updates)' % (code, file_status)
 
 @app.route('/handle_upload', methods=['POST', 'GET'])
 def upload_file():
@@ -29,8 +30,8 @@ def upload_file():
 def download_file():
     if 'code' in request.args:
         download_file = file_server.get_download_filepath(request.args['code'])
-        if download_file != '':
-            return send_file(download_file, as_attachment=True)
+        if download_file  is not None:
+            return send_file(download_file[0], as_attachment=True, attachment_filename=download_file[1])
         return 'Failed finding requested file to download'
     return render_template('download_form.html')
 
